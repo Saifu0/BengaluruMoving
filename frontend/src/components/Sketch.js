@@ -26,12 +26,15 @@ class sketch extends Component {
     if (p5.mouseIsPressed) {
       let x1 = p5.map(p5.mouseX, 0, p5.width, 0, 1);
       let y1 = p5.map(p5.mouseY, 0, p5.height, 1, 0);
-      if (p5.mouseButton === p5.LEFT) {
-        y.push(1);
-      } else {
-        y.push(0);
-      }
-      x.push([x1, y1]);
+  
+      if(x1>=0 && x1<=1 && y1>=0 && y1<=1){
+        if (p5.mouseButton === p5.LEFT) {
+          y.push(1);
+        } else {
+          y.push(0);
+        }
+        x.push([x1, y1]);
+      }   
     }
     p5.background(0);
 
@@ -72,6 +75,9 @@ class sketch extends Component {
     ws.onclose = () => {
       console.log("disconnected");
     };
+    document.oncontextmenu = function(){
+      return false;
+    }
   };
 
   render() {
