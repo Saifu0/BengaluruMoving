@@ -70,10 +70,8 @@ class Classification(AsyncWebsocketConsumer):
 
             clf = LinearRegression()
             clf.fit(np.array(x_train).reshape(-1,1),np.array(y_train).reshape(-1,1))
-            
-            x_test = [0,1]
 
-            y_pred = clf.predict(np.array(x_test).reshape(-1,1))
+            y_pred = clf.predict(np.array(x_train).reshape(-1,1))
             await self.send(text_data=json.dumps({'y_pred' : y_pred.tolist()}))
 
 # theta = clf.coef_.tolist()
