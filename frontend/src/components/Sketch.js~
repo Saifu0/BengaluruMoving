@@ -179,7 +179,7 @@ class sketch extends Component {
     p5.stroke(255);
     p5.strokeWeight(2);
     
-    //console.log(y_pred);
+    console.log(y_pred);
 
     for(let i=0;i<x_test.length;i++){
       let xxx = p5.map(x_test[i],0,1,0,p5.width);
