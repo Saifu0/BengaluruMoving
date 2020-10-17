@@ -47,12 +47,12 @@ class Classification(AsyncWebsocketConsumer):
         y_train = event['value'][1]
         Type = event['value'][2]
 
-        if Type == "logistic":
+        if Type == "classification":
             if len(x_train) == 0:
                 return
 
             if len(set(y_train)) <= 1:
-                returne
+                return
 
             clf = LogisticRegression()
             clf.fit(np.array(x_train), np.array(y_train))
@@ -65,17 +65,18 @@ class Classification(AsyncWebsocketConsumer):
 
             await self.send(text_data=json.dumps({'y1': y[0], 'y2': y[1], 'intercept': clf.intercept_.tolist(), 'slope': clf.coef_.tolist()}))
         elif Type == "linear-reg":
-            
-            if len(x_train) ==0 :
+
+            if len(x_train) == 0:
                 return
 
             clf = LinearRegression()
-            clf.fit(np.array(x_train).reshape(-1,1),np.array(y_train).reshape(-1,1))
-            
-            x_test = [0,1]
+            clf.fit(np.array(x_train).reshape(-1, 1),
+                    np.array(y_train).reshape(-1, 1))
 
-            y_pred = clf.predict(np.array(x_test).reshape(-1,1))
-            await self.send(text_data=json.dumps({'y_pred' : y_pred.tolist()}))
+            x_test = [0, 1]
+
+            y_pred = clf.predict(np.array(x_test).reshape(-1, 1))
+            await self.send(text_data=json.dumps({'y_pred': y_pred.tolist()}))
 
         elif Type == "poly-reg":
 
@@ -83,23 +84,20 @@ class Classification(AsyncWebsocketConsumer):
                 return
 
             poly_reg = PolynomialFeatures(degree=4)
-            X_poly = poly_reg.fit_transform(np.array(x_train).reshape(-1,1))
+            X_poly = poly_reg.fit_transform(np.array(x_train).reshape(-1, 1))
 
            # print(X_poly)
 
-            poly_reg.fit(X_poly,np.array(y_train))
-
+            poly_reg.fit(X_poly, np.array(y_train))
 
             clf = LinearRegression()
-            clf.fit(X_poly,np.array(y_train).reshape(-1,1))
+            clf.fit(X_poly, np.array(y_train).reshape(-1, 1))
 
-            x_test =np.arange(0.0,1.0,0.02)
+            x_test = np.arange(0.0, 1.0, 0.02)
 
-            y_pred = clf.predict(poly_reg.fit_transform(x_test.reshape(-1,1)))
-            
-            await self.send(text_data=json.dumps({'y_pred' : y_pred.tolist(), 'x_test' : x_test.tolist()}))
+            y_pred = clf.predict(poly_reg.fit_transform(x_test.reshape(-1, 1)))
 
-
+            await self.send(text_data=json.dumps({'y_pred': y_pred.tolist(), 'x_test': x_test.tolist()}))
 
 
 # theta = clf.coef_.tolist()
