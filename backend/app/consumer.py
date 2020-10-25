@@ -4,8 +4,8 @@ import sklearn
 import pandas as pd
 import numpy as np
 from sklearn.linear_model import LogisticRegression, LinearRegression
-from math import *
 from sklearn.preprocessing import PolynomialFeatures
+from sklearn.model_selection import cross_val_score, LeaveOneOut
 
 
 class Classification(AsyncWebsocketConsumer):
@@ -57,13 +57,16 @@ class Classification(AsyncWebsocketConsumer):
             clf = LogisticRegression()
             clf.fit(np.array(x_train), np.array(y_train))
 
+            y_pred = clf.predict(np.array(x_train))
+            acc = sklearn.metrics.accuracy_score(np.array(y_train), y_pred)
+
             w = clf.coef_
             b = clf.intercept_
 
             x = np.array([0, 1])
             y = -(x*w[0][0] + b)/w[0][1]
 
-            await self.send(text_data=json.dumps({'y1': y[0], 'y2': y[1], 'intercept': clf.intercept_.tolist(), 'slope': clf.coef_.tolist()}))
+            await self.send(text_data=json.dumps({'y1': y[0], 'y2': y[1], 'intercept': clf.intercept_.tolist(), 'slope': clf.coef_.tolist(), 'acc': acc}))
         elif Type == "linear-reg":
 
             if len(x_train) == 0:
@@ -73,10 +76,15 @@ class Classification(AsyncWebsocketConsumer):
             clf.fit(np.array(x_train).reshape(-1, 1),
                     np.array(y_train).reshape(-1, 1))
 
+            # acc = cross_val_score(clf, np.array(
+            #     x_train).reshape(-1, 1), np.array(y_train).reshape(-1, 1), cv=LeaveOneOut())
+            acc = clf.score(np.array(x_train).reshape(-1, 1),
+                            np.array(y_train).reshape(-1, 1))
+
             x_test = [0, 1]
 
             y_pred = clf.predict(np.array(x_test).reshape(-1, 1))
-            await self.send(text_data=json.dumps({'y_pred': y_pred.tolist()}))
+            await self.send(text_data=json.dumps({'y_pred': y_pred.tolist(), 'acc': 1-acc}))
 
         elif Type == "poly-reg":
 
@@ -97,7 +105,9 @@ class Classification(AsyncWebsocketConsumer):
 
             y_pred = clf.predict(poly_reg.fit_transform(x_test.reshape(-1, 1)))
 
-            await self.send(text_data=json.dumps({'y_pred': y_pred.tolist(), 'x_test': x_test.tolist()}))
+            acc = clf.score(X_poly, np.array(y_train).reshape(-1, 1))
+
+            await self.send(text_data=json.dumps({'y_pred': y_pred.tolist(), 'x_test': x_test.tolist(), 'acc': acc}))
 
 
 # theta = clf.coef_.tolist()

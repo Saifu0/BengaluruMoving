@@ -12,9 +12,12 @@ const ws = new WebSocket("ws://localhost:8000/ws/visualizer/");
 
 class LinearRegression extends Component {
 
-    constructor(){
-        super();
+  constructor(){
+    super();
+    this.state = {
+      accuracy : 0
     }
+  }
 
     setup = (p5: p5Types, canvasParentRef: Element) => {
         p5.createCanvas(500, 500).parent(canvasParentRef);
@@ -52,7 +55,12 @@ class LinearRegression extends Component {
         }
         ws.onmessage = (evt) => {
           const message = JSON.parse(evt.data);
-    
+          
+          if(this.state.accuracy !== message["acc"]){
+            this.setState({ accuracy : message["acc"]});
+            this.props.handleAccuracy(this.state.accuracy);
+          }
+         
           y1 = p5.map(message["y_pred"][0], 0, 1, p5.height, 0);
     
           y2 = p5.map(message["y_pred"][1], 0, 1, p5.height, 0);
