@@ -41,6 +41,8 @@ class PolynomialRegression extends Component {
         type : "poly-reg",
         x_train: x,
         y_train: y,
+        degree: this.props.degree,
+        learn_rate : this.props.learn_rate
       };
   
       ws.send(JSON.stringify(obj, null, 1));
@@ -56,12 +58,16 @@ class PolynomialRegression extends Component {
     
       ws.onmessage = (evt) => {
         const message = JSON.parse(evt.data);
+
+        // console.log(message);
+
+        if(this.state.accuracy !== message["acc"]){
+          this.setState({ accuracy : message["acc"]});
+          this.props.handleAccuracy(this.state.accuracy);
+        }
       
         y_pred = message['y_pred']
         x_test = message['x_test']
-
-        this.setState({ accuracy : message["acc"]});
-        this.props.handleAccuracy(this.state.accuracy);
         
       };
       

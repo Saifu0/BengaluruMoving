@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Slider } from 'antd';
+import { Slider, Col } from 'antd';
 
 export class Degree extends Component {
     
@@ -11,13 +11,13 @@ export class Degree extends Component {
         this.handleChange = this.handleChange.bind(this);
     }
 
-    handleChange(value){
-        this.setState({ degree : value });
+    async handleChange(value){
+        await this.setState({ degree : value });
         this.props.handleChange(this.state.degree);
     }
     
     render() {
-        // console.log(this.state.degree);
+        console.log(this.state.degree);
         const marks = {
             1 : '1',
             2 : '2',
@@ -27,7 +27,10 @@ export class Degree extends Component {
         }
         return (
             <div>
+            {/* <p>Degree</p> */}
+            <Col min={1} max={5} span ={10} offset={6}>
                 <Slider min={1} max={5}  onChange={this.handleChange} marks={marks}/>
+                </Col>
             </div>
         )
     }

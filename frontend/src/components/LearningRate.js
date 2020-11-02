@@ -1,18 +1,18 @@
 import React, { Component } from 'react';
-import { Slider } from 'antd';
+import { Slider ,Col} from 'antd';
 
 export class LearningRate extends Component {
 
     constructor(){
         super();
         this.state = {
-            learn_rate : 0
+            learn_rate : 0.0001
         }
         this.handleChange = this.handleChange.bind(this);
     }
 
-    handleChange(value){
-        this.setState({
+    async handleChange(value){
+        await this.setState({
             learn_rate : value
         });
         this.props.handleChange(this.state.learn_rate);
@@ -24,35 +24,35 @@ export class LearningRate extends Component {
 
     render() {
         const marks = {
-            0.1: {style: {
+            0.0001: {style: {
                   color: '#696969',
-                  },label: <small>0.1</small>,},
-            0.4: {style: {
+                  },label: <small>0.0001</small>,},
+            0.0003: {style: {
               color: '#696969',
-              },label: <small>0.4</small>,},
-            0.8: {style: {
+              },label: <small>0.0003</small>,},
+            0.001: {style: {
               color: '#696969',
-              },label: <small>0.8</small>,},
-            1.2: {style: {
+              },label: <small>0.001</small>,},
+            0.003: {style: {
               color: '#696969',
-              },label: <small>1.2</small>,},
-            1.6: {style: {
+              },label: <small>0.003</small>,},
+            0.01: {style: {
               color: '#696969',
-              },label: <small>1.6</small>,},
-            2.2:  {style: {
+              },label: <small>0.01</small>,},
+            0.03:  {style: {
               color: '#696969',
-              },label: <small>2.2</small>,},
-            2.6:  {style: {
+              },label: <small>0.03</small>,},
+            0.1:  {style: {
               color: '#696969',
-              },label: <small>2.6</small>,},   
-            3.2:  {style: {
+              },label: <small>0.1</small>,},   
+            0.3:  {style: {
                 color: '#696969',
-                },label: <small>3.2</small>,},
-            4: {
+                },label: <small>0.3</small>,},
+            1: {
               style: {
                 color: '#f50',
               },
-              label: <strong>4</strong>,
+              label: <strong>1</strong>,
             },
           };
 
@@ -60,7 +60,10 @@ export class LearningRate extends Component {
         
         return (
             <div>
-                <Slider min={0} max={4} marks={marks} onChange={this.handleChange} step={null}/>
+            {/* <p>Learning Rate</p> */}
+            <Col min={1} max={5} span ={18} offset={6}>
+                <Slider min={0.0001} max={1} marks={marks} onChange={this.handleChange} step={null}/>
+                </Col>
             </div>
         )
     }

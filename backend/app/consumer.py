@@ -3,7 +3,7 @@ import json
 import sklearn
 import pandas as pd
 import numpy as np
-from sklearn.linear_model import LogisticRegression, LinearRegression
+from sklearn.linear_model import LogisticRegression, LinearRegression, Ridge, Lasso, SGDRegressor
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.model_selection import cross_val_score, LeaveOneOut
 
@@ -32,12 +32,14 @@ class Classification(AsyncWebsocketConsumer):
         Type = datapoint['type']
         x_train = datapoint['x_train']
         y_train = datapoint['y_train']
+        Degree = datapoint['degree']
+        Alpha = datapoint['learn_rate']
 
         await self.channel_layer.group_send(
             self.groupname,
             {
                 'type': 'deprocessing',
-                'value': [x_train, y_train, Type]
+                'value': [x_train, y_train, Type, Degree, Alpha]
 
             }
         )
@@ -46,6 +48,8 @@ class Classification(AsyncWebsocketConsumer):
         x_train = event['value'][0]
         y_train = event['value'][1]
         Type = event['value'][2]
+        Degree = event['value'][3]
+        Alpha = event['value'][4]
 
         if Type == "classification":
             if len(x_train) == 0:
@@ -72,42 +76,68 @@ class Classification(AsyncWebsocketConsumer):
             if len(x_train) == 0:
                 return
 
-            clf = LinearRegression()
+            clf = Ridge(alpha=Alpha, solver='auto')
             clf.fit(np.array(x_train).reshape(-1, 1),
                     np.array(y_train).reshape(-1, 1))
 
             # acc = cross_val_score(clf, np.array(
             #     x_train).reshape(-1, 1), np.array(y_train).reshape(-1, 1), cv=LeaveOneOut())
-            acc = clf.score(np.array(x_train).reshape(-1, 1),
-                            np.array(y_train).reshape(-1, 1))
 
             x_test = [0, 1]
 
-            y_pred = clf.predict(np.array(x_test).reshape(-1, 1))
-            await self.send(text_data=json.dumps({'y_pred': y_pred.tolist(), 'acc': 1-acc}))
+            line = clf.predict(np.array(x_test).reshape(-1, 1))
+
+            acc = 0
+
+            y_pred = clf.predict(np.array(x_train).reshape(-1, 1)).tolist()
+
+            # print(y_pred)
+
+            for i in range(len(y_pred)):
+                acc += abs(y_train[i] - y_pred[i][0])
+
+            acc /= len(y_pred)
+            acc = 1-acc
+
+            await self.send(text_data=json.dumps({'y_pred': line.tolist(), 'acc': acc}))
 
         elif Type == "poly-reg":
 
             if len(x_train) == 0:
                 return
 
-            poly_reg = PolynomialFeatures(degree=4)
+            poly_reg = PolynomialFeatures(degree=Degree)
             X_poly = poly_reg.fit_transform(np.array(x_train).reshape(-1, 1))
 
            # print(X_poly)
 
             poly_reg.fit(X_poly, np.array(y_train))
 
-            clf = LinearRegression()
+            clf = Ridge(alpha=Alpha)
+            # clf = LinearRegression()
+            # clf = Lasso()
+            # clf = SGDRegressor(loss="squared_loss")
             clf.fit(X_poly, np.array(y_train).reshape(-1, 1))
+
+            y_pred = clf.predict(X_poly).tolist()
 
             x_test = np.arange(0.0, 1.0, 0.02)
 
-            y_pred = clf.predict(poly_reg.fit_transform(x_test.reshape(-1, 1)))
+            line = clf.predict(poly_reg.fit_transform(
+                x_test.reshape(-1, 1))).tolist()
 
-            acc = clf.score(X_poly, np.array(y_train).reshape(-1, 1))
+            acc = 0
 
-            await self.send(text_data=json.dumps({'y_pred': y_pred.tolist(), 'x_test': x_test.tolist(), 'acc': acc}))
+            print(y_pred)
+
+            for i in range(len(y_pred)):
+                acc += abs(y_train[i]-y_pred[i][0])
+
+            acc /= len(y_pred)
+
+            acc = 1-acc
+
+            await self.send(text_data=json.dumps({'y_pred': line, 'x_test': x_test.tolist(), 'acc': acc}))
 
 
 # theta = clf.coef_.tolist()

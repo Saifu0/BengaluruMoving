@@ -41,6 +41,8 @@ class LinearRegression extends Component {
           type : "linear-reg",
           x_train: x,
           y_train: y,
+          degree: 0,
+          learn_rate : this.props.learn_rate
         };
     
         ws.send(JSON.stringify(obj, null, 1));

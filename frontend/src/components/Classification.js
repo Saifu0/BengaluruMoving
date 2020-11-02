@@ -47,6 +47,8 @@ class Classification extends Component {
         type : "classification",
         x_train: x,
         y_train: y,
+        degree : 0,
+        learn_rate : 0
       };
   
       ws.send(JSON.stringify(obj, null, 1));

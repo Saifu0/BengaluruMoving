@@ -1,5 +1,4 @@
 import React from "react";
-// import Sketch from "./components/Sketch";
 import "./App.css";
 import Layout from './components/Layout';
 
