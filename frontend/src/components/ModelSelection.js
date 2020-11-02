@@ -47,8 +47,8 @@ class ModelSelection extends Component {
             if(this.state.model ==="linear-reg"){
                 return (
                 <div>
-                    <h3 >Degree</h3>
-                    <Degree handleChange={this.handleDegree}/>
+                    <h3 >Learn Rate</h3>
+                    <LearningRate handleChange={this.handleLearnRate} />
                 </div>
                 )
             }else if(this.state.model === "poly-reg"){
