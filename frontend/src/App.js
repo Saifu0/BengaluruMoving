@@ -1,12 +1,11 @@
 import React from "react";
-import Sketch from "./components/Sketch";
 import "./App.css";
+import Layout from './components/Layout';
 
 function App() {
   return (
     <div className="App">
-      <div>Hello world!</div>
-      <Sketch />
+      <Layout/>
     </div>
   );
 }
