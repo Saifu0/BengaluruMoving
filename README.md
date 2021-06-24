@@ -1,5 +1,5 @@
-# ml-visualizer
-Machine Learning Algorithm Visualizer 
+# Machine Learning Algorithm Visualizer 
+
 
 ## Algorithm Support
 - Linear Regression
