@@ -13,9 +13,11 @@ Navigate to the backend/ directory
 2. Install all the requirements for the backend
 
 ```pip install -r requirements.txt```
+
 3. Start Development Server
 
 ```python manage.py runserver```
+
 4. Open a websocket connection on different terminal for real-time data
 
 ```python -m websockets ws://localhost:8000/ws/visualizer/```
