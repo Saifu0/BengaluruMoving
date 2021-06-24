@@ -1,7 +1,7 @@
 # Machine Learning Algorithm Visualizer 
 
 
-### Algorithm Support
+### Algorithm Supported
 - Linear Regression
 - Polynomial Regression
 - Logistic Regression
